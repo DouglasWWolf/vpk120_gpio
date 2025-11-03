@@ -129,7 +129,14 @@ module top_level (
   UART_rxd,
   UART_txd,
   GPIO_0_tri_o,
-  GPIO_1_tri_i
+  GPIO_1_tri_i,
+  GPIO_2_tri_o,
+  IIC_0_scl_i,
+  IIC_0_scl_o,
+  IIC_0_scl_t,
+  IIC_0_sda_i,
+  IIC_0_sda_o,
+  IIC_0_sda_t
 );
 
   (* X_INTERFACE_INFO = "xilinx.com:interface:lpddr4:1.0 ch0_lpddr4_trip1 DQ_A" *)
@@ -401,6 +408,22 @@ module top_level (
   (* X_INTERFACE_INFO = "xilinx.com:interface:gpio:1.0 GPIO_1 TRI_I" *)
   (* X_INTERFACE_MODE = "master GPIO_1" *)
   input [3:0]GPIO_1_tri_i;
+  (* X_INTERFACE_INFO = "xilinx.com:interface:gpio:1.0 GPIO_2 TRI_O" *)
+  (* X_INTERFACE_MODE = "master GPIO_2" *)
+  output [1:0]GPIO_2_tri_o;
+  (* X_INTERFACE_INFO = "xilinx.com:interface:iic:1.0 IIC_0 SCL_I" *)
+  (* X_INTERFACE_MODE = "master IIC_0" *)
+  input IIC_0_scl_i;
+  (* X_INTERFACE_INFO = "xilinx.com:interface:iic:1.0 IIC_0 SCL_O" *)
+  output IIC_0_scl_o;
+  (* X_INTERFACE_INFO = "xilinx.com:interface:iic:1.0 IIC_0 SCL_T" *)
+  output IIC_0_scl_t;
+  (* X_INTERFACE_INFO = "xilinx.com:interface:iic:1.0 IIC_0 SDA_I" *)
+  input IIC_0_sda_i;
+  (* X_INTERFACE_INFO = "xilinx.com:interface:iic:1.0 IIC_0 SDA_O" *)
+  output IIC_0_sda_o;
+  (* X_INTERFACE_INFO = "xilinx.com:interface:iic:1.0 IIC_0 SDA_T" *)
+  output IIC_0_sda_t;
 
   // stub module has no contents
 

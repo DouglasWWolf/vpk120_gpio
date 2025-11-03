@@ -2,7 +2,7 @@
 //Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 //--------------------------------------------------------------------------------
 //Tool Version: Vivado v.2024.2 (lin64) Build 5239630 Fri Nov 08 22:34:34 MST 2024
-//Date        : Wed Oct 29 16:48:15 2025
+//Date        : Mon Nov  3 00:01:29 2025
 //Host        : wolf-super-server running 64-bit Ubuntu 20.04.6 LTS
 //Command     : generate_target top_level.bd
 //Design      : top_level
@@ -160,6 +160,13 @@ endmodule
 module pl_rtl_imp_QFYSB7
    (GPIO_0_tri_o,
     GPIO_1_tri_i,
+    GPIO_2_tri_o,
+    IIC_0_scl_i,
+    IIC_0_scl_o,
+    IIC_0_scl_t,
+    IIC_0_sda_i,
+    IIC_0_sda_o,
+    IIC_0_sda_t,
     S00_AXI_araddr,
     S00_AXI_arburst,
     S00_AXI_arcache,
@@ -206,6 +213,13 @@ module pl_rtl_imp_QFYSB7
     irq);
   output [3:0]GPIO_0_tri_o;
   input [3:0]GPIO_1_tri_i;
+  output [1:0]GPIO_2_tri_o;
+  input IIC_0_scl_i;
+  output IIC_0_scl_o;
+  output IIC_0_scl_t;
+  input IIC_0_sda_i;
+  output IIC_0_sda_o;
+  output IIC_0_sda_t;
   input S00_AXI_araddr;
   input [1:0]S00_AXI_arburst;
   input [3:0]S00_AXI_arcache;
@@ -253,6 +267,13 @@ module pl_rtl_imp_QFYSB7
 
   wire [3:0]GPIO_0_tri_o;
   wire [3:0]GPIO_1_tri_i;
+  wire [1:0]GPIO_2_tri_o;
+  wire IIC_0_scl_i;
+  wire IIC_0_scl_o;
+  wire IIC_0_scl_t;
+  wire IIC_0_sda_i;
+  wire IIC_0_sda_o;
+  wire IIC_0_sda_t;
   wire S00_AXI_araddr;
   wire [1:0]S00_AXI_arburst;
   wire [3:0]S00_AXI_arcache;
@@ -384,6 +405,40 @@ module pl_rtl_imp_QFYSB7
   wire icn_ctrl_M03_AXI_WREADY;
   wire icn_ctrl_M03_AXI_WSTRB;
   wire [0:0]icn_ctrl_M03_AXI_WVALID;
+  wire icn_ctrl_M04_AXI_ARADDR;
+  wire icn_ctrl_M04_AXI_ARREADY;
+  wire [0:0]icn_ctrl_M04_AXI_ARVALID;
+  wire icn_ctrl_M04_AXI_AWADDR;
+  wire icn_ctrl_M04_AXI_AWREADY;
+  wire [0:0]icn_ctrl_M04_AXI_AWVALID;
+  wire [0:0]icn_ctrl_M04_AXI_BREADY;
+  wire [1:0]icn_ctrl_M04_AXI_BRESP;
+  wire icn_ctrl_M04_AXI_BVALID;
+  wire [31:0]icn_ctrl_M04_AXI_RDATA;
+  wire [0:0]icn_ctrl_M04_AXI_RREADY;
+  wire [1:0]icn_ctrl_M04_AXI_RRESP;
+  wire icn_ctrl_M04_AXI_RVALID;
+  wire icn_ctrl_M04_AXI_WDATA;
+  wire icn_ctrl_M04_AXI_WREADY;
+  wire icn_ctrl_M04_AXI_WSTRB;
+  wire [0:0]icn_ctrl_M04_AXI_WVALID;
+  wire icn_ctrl_M05_AXI_ARADDR;
+  wire icn_ctrl_M05_AXI_ARREADY;
+  wire [0:0]icn_ctrl_M05_AXI_ARVALID;
+  wire icn_ctrl_M05_AXI_AWADDR;
+  wire icn_ctrl_M05_AXI_AWREADY;
+  wire [0:0]icn_ctrl_M05_AXI_AWVALID;
+  wire [0:0]icn_ctrl_M05_AXI_BREADY;
+  wire [1:0]icn_ctrl_M05_AXI_BRESP;
+  wire icn_ctrl_M05_AXI_BVALID;
+  wire [31:0]icn_ctrl_M05_AXI_RDATA;
+  wire [0:0]icn_ctrl_M05_AXI_RREADY;
+  wire [1:0]icn_ctrl_M05_AXI_RRESP;
+  wire icn_ctrl_M05_AXI_RVALID;
+  wire icn_ctrl_M05_AXI_WDATA;
+  wire icn_ctrl_M05_AXI_WREADY;
+  wire icn_ctrl_M05_AXI_WSTRB;
+  wire [0:0]icn_ctrl_M05_AXI_WVALID;
   wire irq;
 
   top_level_axi_gpio_0_0 axi_gpio_0
@@ -428,6 +483,53 @@ module pl_rtl_imp_QFYSB7
         .s_axi_wready(icn_ctrl_M01_AXI_WREADY),
         .s_axi_wstrb({icn_ctrl_M01_AXI_WSTRB,icn_ctrl_M01_AXI_WSTRB,icn_ctrl_M01_AXI_WSTRB,icn_ctrl_M01_AXI_WSTRB}),
         .s_axi_wvalid(icn_ctrl_M01_AXI_WVALID));
+  top_level_axi_gpio_1_0 axi_gpio_2
+       (.gpio_io_o(GPIO_2_tri_o),
+        .s_axi_aclk(aclk),
+        .s_axi_araddr({icn_ctrl_M04_AXI_ARADDR,icn_ctrl_M04_AXI_ARADDR,icn_ctrl_M04_AXI_ARADDR,icn_ctrl_M04_AXI_ARADDR,icn_ctrl_M04_AXI_ARADDR,icn_ctrl_M04_AXI_ARADDR,icn_ctrl_M04_AXI_ARADDR,icn_ctrl_M04_AXI_ARADDR,icn_ctrl_M04_AXI_ARADDR}),
+        .s_axi_aresetn(aresetn),
+        .s_axi_arready(icn_ctrl_M04_AXI_ARREADY),
+        .s_axi_arvalid(icn_ctrl_M04_AXI_ARVALID),
+        .s_axi_awaddr({icn_ctrl_M04_AXI_AWADDR,icn_ctrl_M04_AXI_AWADDR,icn_ctrl_M04_AXI_AWADDR,icn_ctrl_M04_AXI_AWADDR,icn_ctrl_M04_AXI_AWADDR,icn_ctrl_M04_AXI_AWADDR,icn_ctrl_M04_AXI_AWADDR,icn_ctrl_M04_AXI_AWADDR,icn_ctrl_M04_AXI_AWADDR}),
+        .s_axi_awready(icn_ctrl_M04_AXI_AWREADY),
+        .s_axi_awvalid(icn_ctrl_M04_AXI_AWVALID),
+        .s_axi_bready(icn_ctrl_M04_AXI_BREADY),
+        .s_axi_bresp(icn_ctrl_M04_AXI_BRESP),
+        .s_axi_bvalid(icn_ctrl_M04_AXI_BVALID),
+        .s_axi_rdata(icn_ctrl_M04_AXI_RDATA),
+        .s_axi_rready(icn_ctrl_M04_AXI_RREADY),
+        .s_axi_rresp(icn_ctrl_M04_AXI_RRESP),
+        .s_axi_rvalid(icn_ctrl_M04_AXI_RVALID),
+        .s_axi_wdata({icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA,icn_ctrl_M04_AXI_WDATA}),
+        .s_axi_wready(icn_ctrl_M04_AXI_WREADY),
+        .s_axi_wstrb({icn_ctrl_M04_AXI_WSTRB,icn_ctrl_M04_AXI_WSTRB,icn_ctrl_M04_AXI_WSTRB,icn_ctrl_M04_AXI_WSTRB}),
+        .s_axi_wvalid(icn_ctrl_M04_AXI_WVALID));
+  top_level_axi_iic_0_0 axi_iic_0
+       (.s_axi_aclk(aclk),
+        .s_axi_araddr({icn_ctrl_M05_AXI_ARADDR,icn_ctrl_M05_AXI_ARADDR,icn_ctrl_M05_AXI_ARADDR,icn_ctrl_M05_AXI_ARADDR,icn_ctrl_M05_AXI_ARADDR,icn_ctrl_M05_AXI_ARADDR,icn_ctrl_M05_AXI_ARADDR,icn_ctrl_M05_AXI_ARADDR,icn_ctrl_M05_AXI_ARADDR}),
+        .s_axi_aresetn(aresetn),
+        .s_axi_arready(icn_ctrl_M05_AXI_ARREADY),
+        .s_axi_arvalid(icn_ctrl_M05_AXI_ARVALID),
+        .s_axi_awaddr({icn_ctrl_M05_AXI_AWADDR,icn_ctrl_M05_AXI_AWADDR,icn_ctrl_M05_AXI_AWADDR,icn_ctrl_M05_AXI_AWADDR,icn_ctrl_M05_AXI_AWADDR,icn_ctrl_M05_AXI_AWADDR,icn_ctrl_M05_AXI_AWADDR,icn_ctrl_M05_AXI_AWADDR,icn_ctrl_M05_AXI_AWADDR}),
+        .s_axi_awready(icn_ctrl_M05_AXI_AWREADY),
+        .s_axi_awvalid(icn_ctrl_M05_AXI_AWVALID),
+        .s_axi_bready(icn_ctrl_M05_AXI_BREADY),
+        .s_axi_bresp(icn_ctrl_M05_AXI_BRESP),
+        .s_axi_bvalid(icn_ctrl_M05_AXI_BVALID),
+        .s_axi_rdata(icn_ctrl_M05_AXI_RDATA),
+        .s_axi_rready(icn_ctrl_M05_AXI_RREADY),
+        .s_axi_rresp(icn_ctrl_M05_AXI_RRESP),
+        .s_axi_rvalid(icn_ctrl_M05_AXI_RVALID),
+        .s_axi_wdata({icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA,icn_ctrl_M05_AXI_WDATA}),
+        .s_axi_wready(icn_ctrl_M05_AXI_WREADY),
+        .s_axi_wstrb({icn_ctrl_M05_AXI_WSTRB,icn_ctrl_M05_AXI_WSTRB,icn_ctrl_M05_AXI_WSTRB,icn_ctrl_M05_AXI_WSTRB}),
+        .s_axi_wvalid(icn_ctrl_M05_AXI_WVALID),
+        .scl_i(IIC_0_scl_i),
+        .scl_o(IIC_0_scl_o),
+        .scl_t(IIC_0_scl_t),
+        .sda_i(IIC_0_sda_i),
+        .sda_o(IIC_0_sda_o),
+        .sda_t(IIC_0_sda_t));
   top_level_axi_intc_0_0 axi_intc_0
        (.intr(dummy_intr_dout),
         .irq(irq),
@@ -586,6 +688,50 @@ module pl_rtl_imp_QFYSB7
         .M03_AXI_wready(icn_ctrl_M03_AXI_WREADY),
         .M03_AXI_wstrb(icn_ctrl_M03_AXI_WSTRB),
         .M03_AXI_wvalid(icn_ctrl_M03_AXI_WVALID),
+        .M04_AXI_araddr(icn_ctrl_M04_AXI_ARADDR),
+        .M04_AXI_arready(icn_ctrl_M04_AXI_ARREADY),
+        .M04_AXI_arvalid(icn_ctrl_M04_AXI_ARVALID),
+        .M04_AXI_awaddr(icn_ctrl_M04_AXI_AWADDR),
+        .M04_AXI_awready(icn_ctrl_M04_AXI_AWREADY),
+        .M04_AXI_awvalid(icn_ctrl_M04_AXI_AWVALID),
+        .M04_AXI_bid(1'b0),
+        .M04_AXI_bready(icn_ctrl_M04_AXI_BREADY),
+        .M04_AXI_bresp(icn_ctrl_M04_AXI_BRESP),
+        .M04_AXI_buser(1'b0),
+        .M04_AXI_bvalid(icn_ctrl_M04_AXI_BVALID),
+        .M04_AXI_rdata(icn_ctrl_M04_AXI_RDATA[0]),
+        .M04_AXI_rid(1'b0),
+        .M04_AXI_rlast(1'b0),
+        .M04_AXI_rready(icn_ctrl_M04_AXI_RREADY),
+        .M04_AXI_rresp(icn_ctrl_M04_AXI_RRESP),
+        .M04_AXI_ruser(1'b0),
+        .M04_AXI_rvalid(icn_ctrl_M04_AXI_RVALID),
+        .M04_AXI_wdata(icn_ctrl_M04_AXI_WDATA),
+        .M04_AXI_wready(icn_ctrl_M04_AXI_WREADY),
+        .M04_AXI_wstrb(icn_ctrl_M04_AXI_WSTRB),
+        .M04_AXI_wvalid(icn_ctrl_M04_AXI_WVALID),
+        .M05_AXI_araddr(icn_ctrl_M05_AXI_ARADDR),
+        .M05_AXI_arready(icn_ctrl_M05_AXI_ARREADY),
+        .M05_AXI_arvalid(icn_ctrl_M05_AXI_ARVALID),
+        .M05_AXI_awaddr(icn_ctrl_M05_AXI_AWADDR),
+        .M05_AXI_awready(icn_ctrl_M05_AXI_AWREADY),
+        .M05_AXI_awvalid(icn_ctrl_M05_AXI_AWVALID),
+        .M05_AXI_bid(1'b0),
+        .M05_AXI_bready(icn_ctrl_M05_AXI_BREADY),
+        .M05_AXI_bresp(icn_ctrl_M05_AXI_BRESP),
+        .M05_AXI_buser(1'b0),
+        .M05_AXI_bvalid(icn_ctrl_M05_AXI_BVALID),
+        .M05_AXI_rdata(icn_ctrl_M05_AXI_RDATA[0]),
+        .M05_AXI_rid(1'b0),
+        .M05_AXI_rlast(1'b0),
+        .M05_AXI_rready(icn_ctrl_M05_AXI_RREADY),
+        .M05_AXI_rresp(icn_ctrl_M05_AXI_RRESP),
+        .M05_AXI_ruser(1'b0),
+        .M05_AXI_rvalid(icn_ctrl_M05_AXI_RVALID),
+        .M05_AXI_wdata(icn_ctrl_M05_AXI_WDATA),
+        .M05_AXI_wready(icn_ctrl_M05_AXI_WREADY),
+        .M05_AXI_wstrb(icn_ctrl_M05_AXI_WSTRB),
+        .M05_AXI_wvalid(icn_ctrl_M05_AXI_WVALID),
         .S00_AXI_araddr(S00_AXI_araddr),
         .S00_AXI_arburst(S00_AXI_arburst),
         .S00_AXI_arcache(S00_AXI_arcache),
@@ -673,10 +819,17 @@ module pl_rtl_imp_QFYSB7
         .aresetn(aresetn));
 endmodule
 
-(* CORE_GENERATION_INFO = "top_level,IP_Integrator,{x_ipVendor=xilinx.com,x_ipLibrary=BlockDiagram,x_ipName=top_level,x_ipVersion=1.00.a,x_ipLanguage=VERILOG,numBlks=16,numReposBlks=14,numNonXlnxBlks=0,numHierBlks=2,maxHierDepth=2,numSysgenBlks=0,numHlsBlks=0,numHdlrefBlks=2,numPkgbdBlks=0,bdsource=USER,synth_mode=Hierarchical}" *) (* HW_HANDOFF = "top_level.hwdef" *) 
+(* CORE_GENERATION_INFO = "top_level,IP_Integrator,{x_ipVendor=xilinx.com,x_ipLibrary=BlockDiagram,x_ipName=top_level,x_ipVersion=1.00.a,x_ipLanguage=VERILOG,numBlks=18,numReposBlks=16,numNonXlnxBlks=0,numHierBlks=2,maxHierDepth=2,numSysgenBlks=0,numHlsBlks=0,numHdlrefBlks=2,numPkgbdBlks=0,bdsource=USER,da_axi4_cnt=1,synth_mode=Hierarchical}" *) (* HW_HANDOFF = "top_level.hwdef" *) 
 module top_level
    (GPIO_0_tri_o,
     GPIO_1_tri_i,
+    GPIO_2_tri_o,
+    IIC_0_scl_i,
+    IIC_0_scl_o,
+    IIC_0_scl_t,
+    IIC_0_sda_i,
+    IIC_0_sda_o,
+    IIC_0_sda_t,
     UART_rxd,
     UART_txd,
     ch0_lpddr4_trip1_ca_a,
@@ -801,6 +954,13 @@ module top_level
     lpddr4_clk3_clk_p);
   (* X_INTERFACE_INFO = "xilinx.com:interface:gpio:1.0 GPIO_0 TRI_O" *) (* X_INTERFACE_MODE = "Master" *) output [3:0]GPIO_0_tri_o;
   (* X_INTERFACE_INFO = "xilinx.com:interface:gpio:1.0 GPIO_1 TRI_I" *) (* X_INTERFACE_MODE = "Master" *) input [3:0]GPIO_1_tri_i;
+  (* X_INTERFACE_INFO = "xilinx.com:interface:gpio:1.0 GPIO_2 TRI_O" *) (* X_INTERFACE_MODE = "Master" *) output [1:0]GPIO_2_tri_o;
+  (* X_INTERFACE_INFO = "xilinx.com:interface:iic:1.0 IIC_0 SCL_I" *) (* X_INTERFACE_MODE = "Master" *) input IIC_0_scl_i;
+  (* X_INTERFACE_INFO = "xilinx.com:interface:iic:1.0 IIC_0 SCL_O" *) output IIC_0_scl_o;
+  (* X_INTERFACE_INFO = "xilinx.com:interface:iic:1.0 IIC_0 SCL_T" *) output IIC_0_scl_t;
+  (* X_INTERFACE_INFO = "xilinx.com:interface:iic:1.0 IIC_0 SDA_I" *) input IIC_0_sda_i;
+  (* X_INTERFACE_INFO = "xilinx.com:interface:iic:1.0 IIC_0 SDA_O" *) output IIC_0_sda_o;
+  (* X_INTERFACE_INFO = "xilinx.com:interface:iic:1.0 IIC_0 SDA_T" *) output IIC_0_sda_t;
   (* X_INTERFACE_INFO = "xilinx.com:interface:uart:1.0 UART RxD" *) (* X_INTERFACE_MODE = "Master" *) input UART_rxd;
   (* X_INTERFACE_INFO = "xilinx.com:interface:uart:1.0 UART TxD" *) output UART_txd;
   (* X_INTERFACE_INFO = "xilinx.com:interface:lpddr4:1.0 ch0_lpddr4_trip1 CA_A" *) (* X_INTERFACE_MODE = "Master" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME ch0_lpddr4_trip1, CAN_DEBUG false" *) output [5:0]ch0_lpddr4_trip1_ca_a;
@@ -1297,6 +1457,13 @@ module top_level
   (* HARD_CONN = "true" *) wire CIPS_0_pmc_axi_noc_axi0_clk;
   wire [3:0]GPIO_0_tri_o;
   wire [3:0]GPIO_1_tri_i;
+  wire [1:0]GPIO_2_tri_o;
+  wire IIC_0_scl_i;
+  wire IIC_0_scl_o;
+  wire IIC_0_scl_t;
+  wire IIC_0_sda_i;
+  wire IIC_0_sda_o;
+  wire IIC_0_sda_t;
   wire UART_rxd;
   wire UART_txd;
   wire [5:0]ch0_lpddr4_trip1_ca_a;
@@ -2362,6 +2529,13 @@ module top_level
   pl_rtl_imp_QFYSB7 pl_rtl
        (.GPIO_0_tri_o(GPIO_0_tri_o),
         .GPIO_1_tri_i(GPIO_1_tri_i),
+        .GPIO_2_tri_o(GPIO_2_tri_o),
+        .IIC_0_scl_i(IIC_0_scl_i),
+        .IIC_0_scl_o(IIC_0_scl_o),
+        .IIC_0_scl_t(IIC_0_scl_t),
+        .IIC_0_sda_i(IIC_0_sda_i),
+        .IIC_0_sda_o(IIC_0_sda_o),
+        .IIC_0_sda_t(IIC_0_sda_t),
         .S00_AXI_araddr(CIPS_0_M_AXI_GP0_ARADDR[0]),
         .S00_AXI_arburst(CIPS_0_M_AXI_GP0_ARBURST),
         .S00_AXI_arcache(CIPS_0_M_AXI_GP0_ARCACHE),

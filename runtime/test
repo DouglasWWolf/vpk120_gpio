@@ -1,0 +1,255 @@
+export axi_uart_device=/dev/ttyUSB1    
+
+       BASE_ADDR=0xA4010000
+         IIC_GIE=$((BASE_ADDR + 0x1C))
+         IIC_ISR=$((BASE_ADDR + 0x20))
+         IIC_IER=$((BASE_ADDR + 0x28))
+       IIC_SOFTR=$((BASE_ADDR + 0x40))
+          IIC_CR=$((BASE_ADDR + 0x100))
+          IIC_SR=$((BASE_ADDR + 0x104))
+     IIC_TX_FIFO=$((BASE_ADDR + 0x108))   
+     IIC_RX_FIFO=$((BASE_ADDR + 0x10C))   
+         IIC_ADR=$((BASE_ADDR + 0x110))   
+ IIC_TX_FIFO_OCY=$((BASE_ADDR + 0x114))      
+ IIC_RX_FIFO_OCY=$((BASE_ADDR + 0x118))      
+     IIC_TEN_ADR=$((BASE_ADDR + 0x11C))  
+IIC_RX_FIFO_PIRQ=$((BASE_ADDR + 0x11C))          
+I2C_RD=1
+I2C_WR=0
+I2C_START=0x100
+ I2C_STOP=0x200
+
+EN=1
+RX_FULL=8
+
+
+
+axi()
+{
+    pcireg $1 $2 $3 $4 $5 $6 $7 $8 $9
+
+    #if [ ! -z $2 ] && [ $1 != "-dec" ]; then
+    #    printf "Write 0x%03X to 0x%04X\n" $2 $1
+    #fi
+}
+
+byte()
+{
+    local value=$1
+    local pos=$2
+
+    case $pos in 
+        0) echo $((value & 0xFF))
+           ;;
+        1) echo $(( (value >> 8 ) & 0xFF ))
+           ;;
+        2) echo $(( (value >> 16) & 0xFF ))
+           ;;
+        3) echo $(( (value >> 24) & 0xFF ))
+           ;;
+    esac
+}
+
+
+
+show_isr()
+{
+  value=$(axi -dec $IIC_ISR)
+  echo IIC_ISR = $(printf "%i 0x%02x" $value $value) 
+  test $((value & 1)) -ne 0  && echo "Arb Lost"
+  test $((value & 2)) -ne 0  && echo "Xmit error"  
+  test $((value & 4)) -ne 0  && echo "TX FIFO Empty"  
+  test $((value & 8)) -ne 0  && echo "RX FIFO Full"    
+}
+
+general_call()
+{
+    local gc_type=$1
+    axi $IIC_TX_FIFO $((I2C_START))
+    axi $IIC_TX_FIFO $(( $gc_type | I2C_STOP ))
+    axi $IIC_CR $EN
+
+    # Figure out how to tell when general call is complete!
+    sleep 1
+}
+
+write_register()
+{
+    local      device_addr=$1
+    local       addr_bytes=$2
+    local       addr_value=$3
+    local       data_bytes=$4
+    local       data_value=$5
+    
+    axi $IIC_SOFTR 0x0A
+    axi $IIC_TX_FIFO $((I2C_START | (device_addr*2) | I2C_WR))
+    test $addr_bytes -eq 2 && axi $IIC_TX_FIFO $(byte $addr_value 1)
+    axi $IIC_TX_FIFO $(byte $addr_value 0)
+
+    test $data_bytes -eq 4 && axi $IIC_TX_FIFO $(byte $data_value 3)
+    test $data_bytes -ge 3 && axi $IIC_TX_FIFO $(byte $data_value 2)
+    test $data_bytes -ge 2 && axi $IIC_TX_FIFO $(byte $data_value 1)
+    axi $IIC_TX_FIFO $(( (data_value & 0xFF) | I2C_STOP ))
+
+    axi $IIC_CR $EN
+
+    sleep .1
+    show_isr
+
+}
+
+
+old_read_register()
+{
+    local      device_addr=$1
+    local       addr_bytes=$2
+    local       addr_value=$3
+    local       data_bytes=$4
+    local stop_before_read=$5
+
+    axi $IIC_SOFTR 0x0A
+    
+    # Set up the device's device address
+    axi $IIC_TX_FIFO $((I2C_START | (device_addr*2) | I2C_WR))
+
+    # Set up the device's register number 
+    test $addr_bytes -eq 2 && axi $IIC_TX_FIFO $(byte $addr_value 1)
+    if [ $stop_before_read -eq 1 ]; then
+      axi $IIC_TX_FIFO $(((addr_value & 0xFF) | I2C_STOP))
+    else
+      axi $IIC_TX_FIFO $((addr_value & 0xFF))
+    fi
+
+    # We want to perform a data read
+    axi $IIC_TX_FIFO $((I2C_START | (device_addr*2) | I2C_RD))
+
+    # This is how many bytes we want to read
+    axi $IIC_TX_FIFO $(( data_bytes | I2C_STOP ))
+
+    # Raise RX_FULL in ISR when we receive this many byutes
+    axi $IIC_RX_FIFO_PIRQ $data_bytes
+
+    # Start the transfer
+    axi $IIC_CR $EN
+
+    local ok=0
+    for i in 1 2 3 4 5 6 7 8 9; do
+        sleep .001
+        isr=$(axi -dec $IIC_ISR)
+        if [ $(( isr & RX_FULL)) -ne 0 ]; then
+            ok=1
+            break
+        fi
+    done
+
+    if [ $ok -eq 0 ]; then
+        echo FAILED!
+        show_isr
+        exit 1
+    fi
+
+    result=0
+    while [ $data_bytes -ne 0 ]; do
+        bb=$(axi -dec $IIC_RX_FIFO)
+        result=$(( (result * 256) | bb ))
+        data_bytes=$((data_bytes - 1))
+    done
+
+    printf "Result = %i 0x%04X\n" $result $result
+}
+
+
+read_register()
+{
+    local      device_addr=$1
+    local       addr_bytes=$2
+    local       addr_value=$3
+    local       data_bytes=$4
+    local stop_before_read=$5
+
+    axi $IIC_SOFTR 0x0A
+    
+    # Set up the device's device address
+    axi $IIC_TX_FIFO $((I2C_START | (device_addr*2) | I2C_WR))
+
+    # Set up the device's register number 
+    test $addr_bytes -eq 2 && axi $IIC_TX_FIFO $(byte $addr_value 1)
+    if [ $stop_before_read -eq 1 ]; then
+      axi $IIC_TX_FIFO $(((addr_value & 0xFF) | I2C_STOP))
+    else
+      axi $IIC_TX_FIFO $((addr_value & 0xFF))
+    fi
+
+    # We want to perform a data read
+    axi $IIC_TX_FIFO $((I2C_START | (device_addr*2) | I2C_RD))
+
+    # This is how many bytes we want to read
+    axi $IIC_TX_FIFO $(( data_bytes | I2C_STOP ))
+
+    # Raise RX_FULL in ISR when we receive this many byutes
+    axi $IIC_RX_FIFO_PIRQ $data_bytes
+
+    # Start the transfer
+    axi $IIC_CR $EN
+
+    local ok=0
+    for i in 1 2 3 4 5 6 7 8 9; do
+        sleep .001
+        isr=$(axi -dec $IIC_ISR)
+        if [ $(( isr & RX_FULL)) -ne 0 ]; then
+            ok=1
+            break
+        fi
+    done
+
+    if [ $ok -eq 0 ]; then
+        echo FAILED!
+        show_isr
+        return
+    fi
+
+    result=0
+    while [ $data_bytes -ne 0 ]; do
+        bb=$(axi -dec $IIC_RX_FIFO)
+        result=$(( (result * 256) | bb ))
+        data_bytes=$((data_bytes - 1))
+    done
+
+    printf "Result = %i 0x%04X\n" $result $result
+}
+
+
+GP_IODIRA=0x00
+GP_IODIRB=0x01
+ GP_GPPUA=0x0C
+ GP_GPPUB=0x0D
+ GP_GPIOA=0x12
+ GP_GPIOB=0x13
+
+
+#echo "Reading"
+#read_register 0x20 1 0x00 1 0
+#echo "Done"
+
+# Make bank A entirely outputs
+#write_register 0x20 1 0x00 1 0x00
+
+# Turn on bits in bank A
+#write_register 0x20 1 0x12 1 0xAA
+
+regi()
+{
+    read_register 0x20 1 $1 1 0
+}
+
+rego()
+{
+    write_register 0x20 1 $1 1 $2    
+}
+
+rego $GP_IODIRA 0
+rego $GP_GPIOA  0xAA
+rego $GP_IODIRB 0xFF
+rego $GP_GPPUB  0xFF
+regi $GP_GPIOB
+
