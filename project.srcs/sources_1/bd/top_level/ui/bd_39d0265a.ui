@@ -78,7 +78,7 @@ levelinfo -pg 1 0 80 410 860 1220 1420
 pagesize -pg 1 -db -bbox -sgen 0 0 1590 800
 ",
    "No Loops_ScaleFactor":"0.905542",
-   "No Loops_TopLeft":"-32,3",
+   "No Loops_TopLeft":"-33,3",
    "commentid":"",
    "guistr":"# # String gsaved with Nlview 7.8.0 2024-04-26 e1825d835c VDI=44 GEI=38 GUI=JA:21.0 TLS
 #  -string -flagsOSRD
